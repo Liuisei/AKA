@@ -71,6 +71,10 @@ public class OseroManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+    }
+    
     void SetUPKoma()
     {
         SetKoma(3, 3, GridMode.White,true);

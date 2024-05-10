@@ -11,6 +11,14 @@ public class OseroGridScript : MonoBehaviour
 
     GridMode _gridMode = GridMode.Empty;
 
+    [SerializeField] Animation     _animation;
+    [SerializeField] AnimationClip _comaAnimationEmpty;
+    [SerializeField] AnimationClip _comaAnimationPB;
+    [SerializeField] AnimationClip _comaAnimationPW;
+    [SerializeField] AnimationClip _comaAnimationCTB;
+    [SerializeField] AnimationClip _comaAnimationCTW;
+
+
     public int X { get => _x; set => _x = value; }
     public int Y { get => _y; set => _y = value; }
 
@@ -24,6 +32,15 @@ public class OseroGridScript : MonoBehaviour
             _gridMode = value;
         }
     }
+
+    void Awake()
+    {
+        if (_animation == null) { Debug.LogError("Animation is not assigned"); }
+
+        if (_comaAnimationPB == null || _comaAnimationPW == null || _comaAnimationCTB == null || _comaAnimationCTW == null) { Debug.LogError("Animation Clips are not assigned"); }
+    }
+
+    void Start() { EmptyGridAnim(); }
 
     void GridChangeAnimation(GridMode gridModeOriginal, GridMode gridModeNew)
     {
@@ -42,6 +59,12 @@ public class OseroGridScript : MonoBehaviour
         }
     }
     //placeBlackPiece
+
+    void EmptyGridAnim()
+    {
+        _animation.clip = _comaAnimationEmpty;
+        _animation.Play();
+    }
 
     void PlacePieceBlack() { Debug.Log("Placing Black Piece"); }
     void PlacePieceWhite() { Debug.Log("Placing White Piece"); }
