@@ -1,44 +1,28 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class OseroManager : MonoBehaviour
 {
-    static  OseroManager _instance;
+    static OseroManager _instance;
     public OseroManager Instance => _instance;
     void Awake()
     {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (_instance == null) { _instance = this; }
+        else { Destroy(gameObject); }
     }
-    
-    [SerializeField]
-    GameObject _oseroGridPrefabSF;
 
-    [SerializeField]
-    GameObject _oseroPiecesPrefabSF;
+    [ SerializeField] GameObject _oseroGridPrefabSf;
 
     List<OseroGridScript> _oseroGridScripts = new List<OseroGridScript>();
-    
-    Tern ternEnum = Tern.Empty;
 
-    public Tern TernEnum => ternEnum;
+    Tern _ternEnum = Tern.Empty;
 
-    [SerializeField]
-    int _maxSquareSF = 1;
+    public Tern TernEnum => _ternEnum;
 
-    [SerializeField]
-    float _oserorangeSF = 1;
+    [SerializeField] int _maxSquareSf = 1;
+
+    [SerializeField] float _oserorangeSf = 1;
 
 
     int   _tern      = 0;
@@ -49,24 +33,34 @@ public class OseroManager : MonoBehaviour
     void Start()
     {
         SetGrid();
+        SetUPKoma();
     }
 
 
-    void SetKoma(int x, int y, GridProperties gridProperties)
+    void SetKoma(int x, int y, GridMode gridMode , bool forced)
     {
-        OseroGridScript oserogurid                        = _oseroGridScripts.FirstOrDefault(n => n.X == x && n.Y == y);
-        if (oserogurid != null) oserogurid.PGridProperties = gridProperties;
-        Debug.LogError("a is null");
+        OseroGridScript targetOseroGridScript                         = _oseroGridScripts.FirstOrDefault(n => n.X == x && n.Y == y);
+        if (targetOseroGridScript == null)
+        {
+            Debug.LogError("targetOseroGridScript is null");
+            return;
+        }
+        if (forced)
+        {
+            targetOseroGridScript.PGridMode = gridMode;
+        }
+        else
+        {
+            if (targetOseroGridScript.PGridMode == GridMode.CanPut) { targetOseroGridScript.PGridMode = gridMode; }
+        }
     }
     void SetGrid()
     {
-        for (int i = 0; i < _maxSquareSF; i++)
+        for (int i = 0; i < _maxSquareSf; i++)
         {
-            for (int k = 0; k < _maxSquareSF; k++)
+            for (int k = 0; k < _maxSquareSf; k++)
             {
-                var oseroGridPrefub = Instantiate(_oseroGridPrefabSF,
-                    new Vector3(i * _oserorangeSF, 0, k * _oserorangeSF),
-                    Quaternion.identity);
+                var oseroGridPrefub = Instantiate(_oseroGridPrefabSf, new Vector3(i * _oserorangeSf, 0, k * _oserorangeSf), Quaternion.identity);
                 oseroGridPrefub.transform.SetParent(transform);
                 oseroGridPrefub.name = "OseroGrid" + i + "_" + k;
                 OseroGridScript newGridScript = oseroGridPrefub.GetComponent<OseroGridScript>();
@@ -76,11 +70,14 @@ public class OseroManager : MonoBehaviour
             }
         }
     }
+
+    void SetUPKoma()
+    {
+        SetKoma(3, 3, GridMode.White,true);
+        SetKoma(3, 4, GridMode.Black,true);
+        SetKoma(4, 3, GridMode.Black,true);
+        SetKoma(4, 4, GridMode.White,true);
+    }
 }
-public enum Tern
-{
-    Empty,
-    Black,
-    White,
-    Result
-}
+
+public enum Tern { Empty, Black, White, Result }

@@ -7,52 +7,50 @@ using UnityEngine;
 public class OseroGridScript : MonoBehaviour
 {
     int _x;
-    
     int _y;
 
-    public int X
+    GridMode _gridMode = GridMode.Empty;
+
+    public int X { get => _x; set => _x = value; }
+    public int Y { get => _y; set => _y = value; }
+
+    public GridMode PGridMode
     {
-        get => _x;
-        set => _x = value;
-    }
-
-    public int Y
-    {
-        get => _y;
-        set => _y = value;
-    }
-
-    public GridProperties PGridProperties
-    {
-        get => _gridProperties;
-        set => _gridProperties = value;
-    }
-
-    GridProperties _gridProperties = GridProperties.Empty;
-
-
-    
-
-  
-
-    
-    
-    void OnMouseDown()
-    {
-        if (PGridProperties == GridProperties.CanPut)
+        get { return _gridMode; }
+        set
         {
-            
+            Debug.Log("GridMode changed to " + value);
+            GridChangeAnimation(_gridMode, value);
+            _gridMode = value;
         }
-        
-        
-        Debug.Log("X:" + _x + "Y:" + _y);
     }
+
+    void GridChangeAnimation(GridMode gridModeOriginal, GridMode gridModeNew)
+    {
+        if (gridModeOriginal == GridMode.CanPut)
+        {
+            if (gridModeNew == GridMode.Black ) { PlacePieceBlack(); }
+            else { PlacePieceWhite(); }
+        }
+        else
+        {
+            if (gridModeNew == GridMode.Black)
+            {
+                if (gridModeOriginal == GridMode.Black) { TurnToBlack(); }
+                else { TurnToWhite(); }
+            }
+        }
+    }
+    //placeBlackPiece
+
+    void PlacePieceBlack() { Debug.Log("Placing Black Piece"); }
+    void PlacePieceWhite() { Debug.Log("Placing White Piece"); }
+
+    void TurnToBlack() { Debug.Log("Turning to Black"); }
+    void TurnToWhite() { Debug.Log("Turning to White"); }
+
+
+    void OnMouseDown() { Debug.Log($"X: {_x}, Y: {_y}, GridProperties: {PGridMode}" ); }
 }
 
-public enum GridProperties
-{
-    White,
-    Black,
-    CanPut,
-    Empty,
-}
+public enum GridMode { Empty, White, Black, CanPut, }
