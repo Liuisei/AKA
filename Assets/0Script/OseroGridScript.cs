@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+
+
 
 public class OseroGridScript : MonoBehaviour
 {
@@ -11,13 +9,8 @@ public class OseroGridScript : MonoBehaviour
 
     GridMode _gridMode = GridMode.Empty;
 
-    [SerializeField] Animation     _animation;
-    [SerializeField] AnimationClip _comaAnimationEmpty;
-    [SerializeField] AnimationClip _comaAnimationPB;
-    [SerializeField] AnimationClip _comaAnimationPW;
-    [SerializeField] AnimationClip _comaAnimationCTB;
-    [SerializeField] AnimationClip _comaAnimationCTW;
-
+    [SerializeField] Animator     _animation;
+  
 
     public int X { get => _x; set => _x = value; }
     public int Y { get => _y; set => _y = value; }
@@ -30,21 +23,20 @@ public class OseroGridScript : MonoBehaviour
             Debug.Log("GridMode changed to " + value);
             GridChangeAnimation(_gridMode, value);
             _gridMode = value;
+            
         }
     }
 
     void Awake()
     {
         if (_animation == null) { Debug.LogError("Animation is not assigned"); }
-
-        if (_comaAnimationPB == null || _comaAnimationPW == null || _comaAnimationCTB == null || _comaAnimationCTW == null) { Debug.LogError("Animation Clips are not assigned"); }
     }
 
     void Start() { EmptyGridAnim(); }
 
     void GridChangeAnimation(GridMode gridModeOriginal, GridMode gridModeNew)
     {
-        if (gridModeOriginal == GridMode.CanPut)
+        if (gridModeOriginal == GridMode.CanPut || gridModeOriginal == GridMode.Empty)
         {
             if (gridModeNew == GridMode.Black ) { PlacePieceBlack(); }
             else { PlacePieceWhite(); }
@@ -62,12 +54,18 @@ public class OseroGridScript : MonoBehaviour
 
     void EmptyGridAnim()
     {
-        _animation.clip = _comaAnimationEmpty;
-        _animation.Play();
+   
     }
 
-    void PlacePieceBlack() { Debug.Log("Placing Black Piece"); }
-    void PlacePieceWhite() { Debug.Log("Placing White Piece"); }
+    void PlacePieceBlack()
+    {
+        Debug.Log("1");
+        _animation.SetInteger("State",2);
+    }
+    void PlacePieceWhite()
+    {
+        _animation.SetInteger("State",1);
+    }
 
     void TurnToBlack() { Debug.Log("Turning to Black"); }
     void TurnToWhite() { Debug.Log("Turning to White"); }

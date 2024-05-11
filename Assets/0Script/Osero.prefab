@@ -44,7 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b25ef77039e3564e9ef52e6e32960b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _oseroGridPrefabSF: {fileID: 2232150426941676789, guid: 9bc9ada8f39e4214ab3d1c62679138ff, type: 3}
-  _oseroPiecesPrefabSF: {fileID: 24420744856703307, guid: 4c0d46bfa7ddf874ebcaafae92d26de4, type: 3}
-  _maxSquareSF: 8
-  _oserorangeSF: 1.1
+  _oseroGridPrefabSf: {fileID: 0}
+  _maxSquareSf: 8
+  _oserorangeSf: 1.1

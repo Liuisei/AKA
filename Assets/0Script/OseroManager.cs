@@ -39,7 +39,7 @@ public class OseroManager : MonoBehaviour
 
     void SetKoma(int x, int y, GridMode gridMode , bool forced)
     {
-        OseroGridScript targetOseroGridScript                         = _oseroGridScripts.FirstOrDefault(n => n.X == x && n.Y == y);
+        OseroGridScript targetOseroGridScript  = _oseroGridScripts.FirstOrDefault(n => n.X == x && n.Y == y);
         if (targetOseroGridScript == null)
         {
             Debug.LogError("targetOseroGridScript is null");

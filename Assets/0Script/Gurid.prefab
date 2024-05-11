@@ -119,12 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66911ee1676dc8b47ad8e7396a19710f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animation: {fileID: 0}
-  _comaAnimationEmpty: {fileID: 7400000, guid: b0fe816c815e7174a9021f2079be7a21, type: 2}
-  _comaAnimationPB: {fileID: 7400000, guid: 849e2778588a94d428f30f63eb486868, type: 2}
-  _comaAnimationPW: {fileID: 7400000, guid: e69f10aa6b553bd4fa45524e80f59ef8, type: 2}
-  _comaAnimationCTB: {fileID: 7400000, guid: 866f61cd873c2a14488be24bd372aa67, type: 2}
-  _comaAnimationCTW: {fileID: 7400000, guid: 5944a7e354df9fd44989641cd7434d56, type: 2}
+  _animation: {fileID: 6594778983436278150}
 --- !u!1001 &1768256607012684764
 PrefabInstance:
   m_ObjectHideFlags: 0
