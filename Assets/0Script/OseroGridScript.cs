@@ -38,14 +38,21 @@ public class OseroGridScript : MonoBehaviour
         {
             if (gridModeNew == GridMode.Empty)
             {
-                var material = GetComponent<Renderer>().material;
                 GetComponent<Renderer>().material = OseroManager.Instance._normalMaterial;
                 return;
             }
 
-            if (gridModeNew == GridMode.Black ) { PlacePieceBlack(); }
+            if (gridModeNew == GridMode.Black )
+            {
+                GetComponent<Renderer>().material = OseroManager.Instance._normalMaterial;
+                PlacePieceBlack();
+            }
 
-            if (gridModeNew == GridMode.White) { PlacePieceWhite(); }
+            if (gridModeNew == GridMode.White)
+            {
+                GetComponent<Renderer>().material = OseroManager.Instance._normalMaterial;
+                PlacePieceWhite();
+            }
         }
         else if (gridModeOriginal == GridMode.Empty)
         {
