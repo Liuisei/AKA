@@ -1,18 +1,12 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 public class OseroGridScript : MonoBehaviour
 {
-    int _x;
-    int _y;
-
-    GridMode _gridMode = GridMode.Empty;
-
-    [SerializeField] Animator     _animation;
-
-
-    public int X { get => _x; set => _x = value; }
-    public int Y { get => _y; set => _y = value; }
+    GridMode                  _gridMode = GridMode.Empty;
+    [SerializeField] Animator _animation;
+    public           int      _number;
 
     public GridMode PGridMode
     {
@@ -70,6 +64,7 @@ public class OseroGridScript : MonoBehaviour
         else if (gridModeOriginal == GridMode.Black || gridModeOriginal == GridMode.White)
         {
             if (gridModeNew == GridMode.Black) { TurnToBlack(); }
+
             if (gridModeNew == GridMode.White ) { TurnToWhite(); }
         }
     }
@@ -83,8 +78,11 @@ public class OseroGridScript : MonoBehaviour
     void TurnToBlack() { _animation.SetInteger("State", 3); }
     void TurnToWhite() { _animation.SetInteger("State", 4); }
 
-
-    void OnMouseDown() { Debug.Log($"X: {_x}, Y: {_y}, GridProperties: {PGridMode}" ); }
+    void OnMouseDown()
+    {
+        Debug.Log(_number + "" + _gridMode);
+        ;
+    }
 }
 
 public enum GridMode { Empty, White, Black, CanPut, }
