@@ -62,12 +62,7 @@ public class OseroGridScript : MonoBehaviour
         }
         else if (gridModeOriginal == GridMode.Black || gridModeOriginal == GridMode.White)
         {
-            if (gridModeNew == GridMode.Black)
-            {
-                TurnToBlack();
-                return;
-            }
-
+            if (gridModeNew == GridMode.Black) { TurnToBlack(); }
             if (gridModeNew == GridMode.White ) { TurnToWhite(); }
         }
     }
@@ -75,15 +70,11 @@ public class OseroGridScript : MonoBehaviour
 
     void EmptyGridAnim() { }
 
-    void PlacePieceBlack()
-    {
-        Debug.Log("1");
-        _animation.SetInteger("State", 2);
-    }
+    void PlacePieceBlack() { _animation.SetInteger("State", 2); }
     void PlacePieceWhite() { _animation.SetInteger("State", 1); }
 
-    void TurnToBlack() { Debug.Log("Turning to Black"); }
-    void TurnToWhite() { Debug.Log("Turning to White"); }
+    void TurnToBlack() { _animation.SetInteger("State", 3); }
+    void TurnToWhite() { _animation.SetInteger("State", 4); }
 
 
     void OnMouseDown() { Debug.Log($"X: {_x}, Y: {_y}, GridProperties: {PGridMode}" ); }

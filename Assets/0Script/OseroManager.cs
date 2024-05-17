@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,9 +12,9 @@ public class OseroManager : MonoBehaviour
         if (_instance == null) { _instance = this; }
         else { Destroy(gameObject); }
     }
+    [SerializeField] GameObject _selectPrefab;
 
     [Header("Materials")] public Material   _canPutMaterial;
-    [SerializeField]      public Material   _selectedMaterial;
     [SerializeField]      public Material   _normalMaterial;
     [SerializeField]             GameObject _oseroGridPrefabSf;
     List<OseroGridScript>                   _oseroGridScripts = new List<OseroGridScript>();
@@ -26,6 +27,31 @@ public class OseroManager : MonoBehaviour
 
     [SerializeField] float _oserorangeSf = 1;
 
+    public int selectx = 0;
+
+    public int selecty = 0;
+
+    public int Selectx
+    {
+        get { return selectx; }
+        set
+        {
+            selectx = value;
+            SelectPrefubPosition();
+        }
+    }
+
+    public int Selecty
+    {
+        get { return selecty; }
+        set
+        {
+            selecty = value;
+            SelectPrefubPosition();
+        }
+    }
+
+    void SelectPrefubPosition() { _selectPrefab.transform.position = new Vector3(Selectx * _oserorangeSf, 0.2f, Selecty * _oserorangeSf); }
 
     int   _tern      = 0;
     float _time      = 0;
@@ -37,8 +63,8 @@ public class OseroManager : MonoBehaviour
         SetGrid();
         SetUPKoma();
         BlactTurn();
+        SelectPrefubPosition();
     }
-
 
     void SetKoma(int x, int y, GridMode gridMode , bool forced)
     {
@@ -98,6 +124,28 @@ public class OseroManager : MonoBehaviour
             TergetVBlock(-1, -1, b.X, b.Y , false );
         }
     }
+
+    void BlackAtk( )
+    {
+        TergetVBlockATK(1,  0,  selectx, selecty,  false );
+        _atkTarget.Clear();
+        TergetVBlockATK(-1, 0,  selectx, selecty , false );
+        _atkTarget.Clear();
+        TergetVBlockATK(0,  1,  selectx, selecty , false );
+        _atkTarget.Clear();
+        TergetVBlockATK(0,  -1, selectx, selecty , false );
+        _atkTarget.Clear();
+        TergetVBlockATK(1,  1,  selectx, selecty , false );
+        _atkTarget.Clear();
+        TergetVBlockATK(1,  -1, selectx, selecty , false );
+        _atkTarget.Clear();
+        TergetVBlockATK(-1, 1,  selectx, selecty , false );
+        _atkTarget.Clear();
+        TergetVBlockATK(-1, -1, selectx, selecty , false );
+        _atkTarget.Clear();
+    }
+
+
     void TergetVBlock(int x, int y,  int ox, int oy , bool haveenemy)
     {
         int             nowx                  = ox + x;
@@ -131,6 +179,64 @@ public class OseroManager : MonoBehaviour
         }
 
         if (targetOseroGridScript.PGridMode == GridMode.Empty) { targetOseroGridScript.PGridMode = GridMode.CanPut; }
+    }
+
+    List<OseroGridScript> _atkTarget = new List<OseroGridScript>();
+    void TergetVBlockATK(int x, int y,  int ox, int oy , bool haveenemy)
+    {
+        Debug.Log("a");
+        int             nowx                  = ox + x;
+        int             nowy                  = oy + y;
+        OseroGridScript targetOseroGridScript = _oseroGridScripts.FirstOrDefault(n => n.X == nowx  && n.Y == nowy);
+        if (targetOseroGridScript == null) { return; }
+
+        if (haveenemy &&  targetOseroGridScript.PGridMode == GridMode.Empty)
+        {
+            _atkTarget.Clear();
+            return;
+        }
+
+        if (targetOseroGridScript.PGridMode == GridMode.White)
+        {
+            _atkTarget.Add(targetOseroGridScript);
+            TergetVBlockATK( x,  y,  nowx,  nowx , true);
+            return;
+        }
+
+        if (targetOseroGridScript.PGridMode == GridMode.Black && haveenemy)
+        {
+            
+            foreach (var t in _atkTarget) { t.PGridMode = GridMode.Black; }
+            Debug.Log("b");
+        }
+    }
+
+    public void Update()
+    {
+        // WASD  KEY DOWN
+        if (Input.GetKeyDown(KeyCode.W) && Selecty < _maxSquareSf - 1) { Selecty += 1; }
+
+        if (Input.GetKeyDown(KeyCode.A) && Selectx > 0) { Selectx -= 1; }
+
+        if (Input.GetKeyDown(KeyCode.S) && Selecty > 0) { Selecty -= 1; }
+
+        if (Input.GetKeyDown(KeyCode.D) && Selectx < _maxSquareSf - 1) { Selectx += 1; }
+
+        //key down space
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            var targetOseroGridScript = _oseroGridScripts.FirstOrDefault(n => n.X == Selectx && n.Y == Selecty);
+            if (targetOseroGridScript == null) { return; }
+
+            if (targetOseroGridScript.PGridMode == GridMode.CanPut)
+            {
+                if (_ternEnum == Tern.Black)
+                {
+                    targetOseroGridScript.PGridMode = GridMode.Black;
+                    BlackAtk();
+                }
+            }
+        }
     }
 }
 
