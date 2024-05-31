@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
+
+[DefaultExecutionOrder(-100)]
 public class OseroManager : MonoBehaviour
 {
     static        OseroManager _instance;
@@ -12,21 +14,32 @@ public class OseroManager : MonoBehaviour
         if (_instance == null) { _instance = this; }
         else { Destroy(gameObject); }
     }
-    [SerializeField] GameObject _selectPrefab;
+
+    /// <summary>Variable</summary>///
+    [SerializeField]             GameObject _selectPrefab;
 
     [Header("Materials")] public Material   _canPutMaterial;
     [SerializeField]      public Material   _normalMaterial;
     [SerializeField]             GameObject _oseroGridPrefabSf;
     OseroGridScript[]                       _oseroGridScripts = new OseroGridScript[64];
+    Tern                                    _ternEnum         = Tern.Empty;
+    [SerializeField] int                    _maxSquareSf      = 1;
+    [SerializeField] float                  _oserorangeSf     = 1;
+    int                                     _selectPoint      = 0;
+    int                                     _blackCount       = 0;
+    int                                     _whiteCount       = 0;
+    int                                     _tern             = 0;
+    float                                   _time             = 0;
+    float                                   _blackTime        = 0;
+    float                                   _whiteTime        = 0;
+    List<OseroGridScript>                   _changeList       = new List<OseroGridScript>();
 
-    Tern _ternEnum = Tern.Empty;
+    /// <summary>Property</summary>///
 
-    public Tern TernEnum => _ternEnum;
+    public Tern TernEnum { get { return _ternEnum; } set { _ternEnum = value; } }
 
-    [SerializeField] int   _maxSquareSf  = 1;
-    [SerializeField] float _oserorangeSf = 1;
-
-    int        _selectPoint = 0;
+    public int BlackCount { get { return _blackCount; } set { _blackCount = value; } }
+    public int WhiteCount { get { return _whiteCount; } set { _whiteCount = value; } }
 
     public int SelectPoint
     {
@@ -38,18 +51,20 @@ public class OseroManager : MonoBehaviour
         }
     }
 
-    void SelectPrefubPosition() { _selectPrefab.transform.position = new Vector3(SelectPoint % 8 * _oserorangeSf, 0.2f, SelectPoint / 8 * _oserorangeSf); }
-
-    int   _tern      = 0;
-    float _time      = 0;
-    float _blackTime = 0;
-    float _whiteTime = 0;
-
     void Start()
     {
         SetUpGrid();
         BlackTurn();
     }
+
+    /// <summary>delegate</summary>///
+    public Action<int>  OnBlackCountChange;
+
+    public Action<int>  OnWhiteCountChange;
+
+
+    /// <summary>Method</summary>///
+    void SelectPrefubPosition() { _selectPrefab.transform.position = new Vector3(SelectPoint % 8 * _oserorangeSf, 0.2f, SelectPoint / 8 * _oserorangeSf); }
     void SetUpGrid()
     {
         for (int i = 0; i < 64; i++)
@@ -63,8 +78,9 @@ public class OseroManager : MonoBehaviour
         _oseroGridScripts[28].PGridMode = GridMode.White;
         _oseroGridScripts[35].PGridMode = GridMode.White;
         _oseroGridScripts[36].PGridMode = GridMode.Black;
+        BlackCountUpdate();
+        WhiteCountUpdate();
     }
-    List<OseroGridScript> _changeList = new List<OseroGridScript>();
 
     void BlackTurn()
     {
@@ -134,6 +150,7 @@ public class OseroManager : MonoBehaviour
         if (haveEnemy && _oseroGridScripts[newposition].PGridMode == GridMode.Black)
         {
             foreach (var c in _changeList) { c.PGridMode = GridMode.Black; }
+
             return;
         }
 
@@ -143,7 +160,7 @@ public class OseroManager : MonoBehaviour
             BlackAttackAsterisk( x, y , newx, newy , true);
         }
     }
-    
+
     void WhiteTurn()
     {
         ResetCanput();
@@ -213,6 +230,7 @@ public class OseroManager : MonoBehaviour
         if (haveEnemy && _oseroGridScripts[newposition].PGridMode == GridMode.White)
         {
             foreach (var c in _changeList) { c.PGridMode = GridMode.White; }
+
             return;
         }
 
@@ -251,18 +269,42 @@ public class OseroManager : MonoBehaviour
                 {
                     _oseroGridScripts[_selectPoint].PGridMode = GridMode.Black;
                     BlackAttack();
+                    BlackCountUpdate();
+                    WhiteCountUpdate();
                     WhiteTurn();
                 }
                 else if (_ternEnum == Tern.White)
                 {
                     _oseroGridScripts[_selectPoint].PGridMode = GridMode.White;
                     WhiteAttack();
+                    BlackCountUpdate();
+                    WhiteCountUpdate();
                     BlackTurn();
                 }
             }
         }
     }
 
+    public void BlackCountUpdate()
+    {
+        _blackCount = _oseroGridScripts.Count(x => x.PGridMode == GridMode.Black);
+        OnBlackCountChange?.Invoke(_blackCount);
+    }
+    public void WhiteCountUpdate()
+    {
+        _whiteCount = _oseroGridScripts.Count(x => x.PGridMode == GridMode.White);
+        OnWhiteCountChange?.Invoke(_whiteCount);
+    }
+    
+    //time count when game start
+    public void StartCount()
+    {
+        _time      = 0;
+        _blackTime = 0;
+        _whiteTime = 0;
+    }
 
-    public enum Tern { Empty, Black, White, Result }
+
 }
+
+public enum Tern { Empty, Black, White, Result }

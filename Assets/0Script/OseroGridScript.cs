@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -13,7 +12,6 @@ public class OseroGridScript : MonoBehaviour
         get { return _gridMode; }
         set
         {
-            Debug.Log("GridMode changed to " + value);
             GridChangeAnimation(_gridMode, value);
             _gridMode = value;
         }
